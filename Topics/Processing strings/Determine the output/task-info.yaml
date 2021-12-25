@@ -1,5 +1,11 @@
 type: choice
 is_multiple_choice: false
+options:
+- text: '"vaJ ,olle"'
+- text: '"Hello, Java"'
+- text: '"Ja ,olleH"'
+- text: '"avaJ ,olleH"'
+- text: '"avaJ ,olle"'
 message_correct: Congratulations!
 message_incorrect: Incorrect solution
 files:
