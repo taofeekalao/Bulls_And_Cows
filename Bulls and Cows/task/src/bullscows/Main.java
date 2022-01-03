@@ -4,14 +4,15 @@ import java.util.Scanner;
 
 public class Main {
 
-    static int bulls = 0;
-    static int cows = 0;
+    static int bulls = -1;
+    static int cows = -1;
     static StringBuilder distinctCode = new StringBuilder();
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        StringBuilder userSecretCode = new StringBuilder();
+        StringBuilder systemGeneratedSecretCode = new StringBuilder();
+        int gameCounter = 1;
 
         int codeLength = scanner.nextInt();
         while (codeLength < 1) {
@@ -27,12 +28,27 @@ public class Main {
                 distinctCode.reverse();
             }
             for (int y = 0; y < codeLength; y++) {
-                userSecretCode.append(distinctCode.charAt(y));
+                systemGeneratedSecretCode.append(distinctCode.charAt(y));
             }
-            System.out.println("The random secret number is " + userSecretCode + ".");
+        }
+        System.out.println("Okay, let's start a game!");
+
+        System.out.println("Turn " + gameCounter + ":");
+        String inputCode = Integer.toString(scanner.nextInt());
+        checkPasscode(systemGeneratedSecretCode.toString(), inputCode);
+        outputGenerator(bulls, cows, systemGeneratedSecretCode.toString());
+        while (bulls != systemGeneratedSecretCode.length()) {
+            System.out.println("Turn " + (gameCounter++) + ":");
+            inputCode = Integer.toString(scanner.nextInt());
+            checkPasscode(systemGeneratedSecretCode.toString(), inputCode);
+            outputGenerator(bulls, cows, systemGeneratedSecretCode.toString());
         }
     }
 
+    /**
+     * This method generates random code based on the length of secret code supplied by the user
+     * @param codeLength
+     */
     private static void generateRandomCode(int codeLength) {
         long pseudoRandomNumber = System.nanoTime();
         StringBuilder secretCode = new StringBuilder(String.valueOf(pseudoRandomNumber));
@@ -42,16 +58,11 @@ public class Main {
         }
     }
 
-/*    public static void main(String[] args) {
-
-        String secretCode =  Integer.toString(9305);
-        Scanner scanner = new Scanner(System.in);
-        String inputCode = Integer.toString(scanner.nextInt());
-
-        checkPasscode(secretCode, inputCode);
-        outputGenerator(bulls, cows, secretCode);
-    }*/
-
+    /**
+     * This validates @param secretCode generated to consist only distinct value
+     * @param secretCode
+     * @return
+     */
     static int checkDistinctCharacter(StringBuilder secretCode) {
         for (int j = 0; j < secretCode.length(); j++) {
             if (!distinctCode.toString().contains(secretCode.substring(j, j + 1))) {
@@ -69,6 +80,8 @@ public class Main {
      * @param cusPassCode
      */
     static void checkPasscode(String passCode, String cusPassCode) {
+        bulls = 0;
+        cows = 0;
         for (int i = 0; i < passCode.length(); i++) {
             for (int j = 0; j < cusPassCode.length(); j++) {
                 if (passCode.charAt(i) == cusPassCode.charAt(j)) {
@@ -91,14 +104,17 @@ public class Main {
      * @param secretCode
      */
     static void outputGenerator(int bulls, int cows, String secretCode) {
-        if (bulls == 0 && cows != 0) {
-            System.out.println("Grade: " + cows + " cow(s). The secret code is " + secretCode + ".");
+        if (bulls == secretCode.length()) {
+            System.out.println("Grade: " + bulls + " bulls\n" +
+                    "Congratulations! You guessed the secret code.");
+        } else if (bulls == 0 && cows != 0) {
+            System.out.println("Grade: " + cows + " cow(s).");
         } else if (bulls == 0 && cows == 0) {
-            System.out.println("Grade: None. The secret code is " + secretCode + ".");
+            System.out.println("Grade: None.");
         } else if (bulls != 0 && cows == 0) {
-            System.out.println("Grade: " + bulls + " bull(s). The secret code is " + secretCode + ".");
+            System.out.println("Grade: " + bulls + " bull(s).");
         } else {
-            System.out.println("Grade: " + bulls + " bull(s) and " + cows + " cow(s). The secret code is " + secretCode + ".");
+            System.out.println("Grade: " + bulls + " bull(s) and " + cows + " cow(s).");
         }
     }
 }
