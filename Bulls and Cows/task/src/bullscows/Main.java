@@ -52,17 +52,6 @@ public class Main {
      * This method generates random code based on the length of secret code supplied by the user
      * @param codeLength
      */
-
-
-//    private static StringBuilder generateRandomCode(int codeLength) {
-//        long pseudoRandomNumber = System.nanoTime();
-//        StringBuilder secretCode = new StringBuilder(String.valueOf(pseudoRandomNumber));
-//        while (checkDistinctCharacter(secretCode) < codeLength) {
-//            pseudoRandomNumber = System.nanoTime();
-//            secretCode = new StringBuilder(String.valueOf(pseudoRandomNumber));
-//        }
-//            return secretCode;
-//    }
     private static StringBuilder generateRandomCode(int codeLength) {
         Random random = new Random();
         StringBuilder secretCode = new StringBuilder();
