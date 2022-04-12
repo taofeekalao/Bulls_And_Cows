@@ -1,5 +1,6 @@
 package bullscows;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -12,6 +13,8 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         StringBuilder systemGeneratedSecretCode = new StringBuilder();
+        StringBuilder secretCode = new StringBuilder();
+
         int gameCounter = 1;
 
         int codeLength = scanner.nextInt();
@@ -38,7 +41,7 @@ public class Main {
         checkPasscode(systemGeneratedSecretCode.toString(), inputCode);
         outputGenerator(bulls, cows, systemGeneratedSecretCode.toString());
         while (bulls != systemGeneratedSecretCode.length()) {
-            System.out.println("Turn " + (gameCounter++) + ":");
+            System.out.println("Turn " + (++gameCounter) + ":");
             inputCode = Integer.toString(scanner.nextInt());
             checkPasscode(systemGeneratedSecretCode.toString(), inputCode);
             outputGenerator(bulls, cows, systemGeneratedSecretCode.toString());
@@ -49,15 +52,28 @@ public class Main {
      * This method generates random code based on the length of secret code supplied by the user
      * @param codeLength
      */
-    private static void generateRandomCode(int codeLength) {
-        long pseudoRandomNumber = System.nanoTime();
-        StringBuilder secretCode = new StringBuilder(String.valueOf(pseudoRandomNumber));
-        while (checkDistinctCharacter(secretCode) < codeLength) {
-            pseudoRandomNumber = System.nanoTime();
-            secretCode = new StringBuilder(String.valueOf(pseudoRandomNumber));
-        }
-    }
 
+
+//    private static StringBuilder generateRandomCode(int codeLength) {
+//        long pseudoRandomNumber = System.nanoTime();
+//        StringBuilder secretCode = new StringBuilder(String.valueOf(pseudoRandomNumber));
+//        while (checkDistinctCharacter(secretCode) < codeLength) {
+//            pseudoRandomNumber = System.nanoTime();
+//            secretCode = new StringBuilder(String.valueOf(pseudoRandomNumber));
+//        }
+//            return secretCode;
+//    }
+    private static StringBuilder generateRandomCode(int codeLength) {
+        Random random = new Random();
+        StringBuilder secretCode = new StringBuilder();
+        for (int j = 0; j < codeLength ; j++) {
+            secretCode.append(random.nextInt(10));
+        }
+        while (checkDistinctCharacter(secretCode) < codeLength) {
+            generateRandomCode(codeLength);
+        }
+        return secretCode;
+    }
     /**
      * This validates @param secretCode generated to consist only distinct value
      * @param secretCode
@@ -87,8 +103,8 @@ public class Main {
                 if (passCode.charAt(i) == cusPassCode.charAt(j)) {
                     cows++;
                     if (i == j) {
-                        bulls++;
-                        cows--;
+                        ++bulls;
+                        --cows;
                     }
                 }
             }
