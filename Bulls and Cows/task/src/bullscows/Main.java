@@ -5,44 +5,91 @@ import java.util.Scanner;
 
 public class Main {
 
+    static final int MAXIMUM_LENGTH = 36;
     static int bulls = -1;
     static int cows = -1;
     static StringBuilder distinctCode = new StringBuilder();
 
     public static void main(String[] args) {
 
+        int numberOfUniqueSymbols = 0;
+        int codeLength = 0;
         Scanner scanner = new Scanner(System.in);
         StringBuilder systemGeneratedSecretCode = new StringBuilder();
-        StringBuilder secretCode = new StringBuilder();
 
         int gameCounter = 1;
-
-        int codeLength = scanner.nextInt();
+        /*
+            Get the length of the secret code
+         */
+        System.out.println("Input the length of the secret code:");
+        codeLength = scanner.nextInt();
         while (codeLength < 1) {
             codeLength = scanner.nextInt();
         }
-        if (codeLength > 10) {
+        if (codeLength > MAXIMUM_LENGTH) {
             System.out.println("Error: can't generate a secret number with a length of " + codeLength + " because there aren't enough unique digits.");
+            return;
         } else {
-            generateRandomCode(codeLength);
-            distinctCode.reverse();
-            while (Integer.parseInt(String.valueOf(distinctCode.charAt(0))) == 0) {
-                generateRandomCode(codeLength);
-                distinctCode.reverse();
+            /*
+                Get number of unique symbols needed in the secret code
+             */
+            System.out.println("Input the number of possible symbols in the code:");
+            numberOfUniqueSymbols = scanner.nextInt();
+            while (numberOfUniqueSymbols > MAXIMUM_LENGTH) {
+                numberOfUniqueSymbols = scanner.nextInt();
             }
+
+            /*
+                Check that secret code length required is not longer than available distinct character
+             */
+            if (numberOfUniqueSymbols < codeLength) {
+                return;
+            }
+
+            /*
+
+             */
+            generateRandomCode(codeLength, numberOfUniqueSymbols);
+            distinctCode.reverse();
             for (int y = 0; y < codeLength; y++) {
                 systemGeneratedSecretCode.append(distinctCode.charAt(y));
             }
         }
+        letUsPlayTheGame(scanner, systemGeneratedSecretCode, gameCounter, numberOfUniqueSymbols);
+    }
+
+    private static void letUsPlayTheGame(Scanner scanner, StringBuilder systemGeneratedSecretCode, int gameCounter, int numberOfUniqueSymbols) {
+
+        String rangeOfSymbolsUsed = numberOfUniqueSymbols > 9 ? "(0-9, " + (char) ('`' + 1) + "-" + (char) ('`' + (numberOfUniqueSymbols - 10)) + ")." :
+                "(0-" + numberOfUniqueSymbols + ").";
+        StringBuilder maskedSecretCode = new StringBuilder();
+        for (int i = 0; i < systemGeneratedSecretCode.length(); i++) {
+            maskedSecretCode.append('*');
+        }
+        System.out.println("The secret is prepared: " + maskedSecretCode + " " + rangeOfSymbolsUsed );
         System.out.println("Okay, let's start a game!");
 
         System.out.println("Turn " + gameCounter + ":");
-        String inputCode = Integer.toString(scanner.nextInt());
+        String inputCode = scanner.next();
+
+        /*
+            Check that length of code entered in not more than maximum code length.
+         */
+        while (inputCode.length() > MAXIMUM_LENGTH) {
+            inputCode = scanner.next();
+        }
         checkPasscode(systemGeneratedSecretCode.toString(), inputCode);
         outputGenerator(bulls, cows, systemGeneratedSecretCode.toString());
         while (bulls != systemGeneratedSecretCode.length()) {
             System.out.println("Turn " + (++gameCounter) + ":");
-            inputCode = Integer.toString(scanner.nextInt());
+            inputCode = scanner.next();
+
+            /*
+                Check that length of code entered in not more than maximum code length.
+            */
+            while (inputCode.length() > MAXIMUM_LENGTH) {
+                inputCode = scanner.next();
+            }
             checkPasscode(systemGeneratedSecretCode.toString(), inputCode);
             outputGenerator(bulls, cows, systemGeneratedSecretCode.toString());
         }
@@ -50,21 +97,25 @@ public class Main {
 
     /**
      * This method generates random code based on the length of secret code supplied by the user
+     *
      * @param codeLength
+     * @param numberOfUniqueSymbols
      */
-    private static StringBuilder generateRandomCode(int codeLength) {
+    private static void generateRandomCode(int codeLength, int numberOfUniqueSymbols) {
         Random random = new Random();
         StringBuilder secretCode = new StringBuilder();
-        for (int j = 0; j < codeLength ; j++) {
-            secretCode.append(random.nextInt(10));
+        for (int j = 0; j < codeLength; j++) {
+            int randomOnTheFly = random.nextInt(numberOfUniqueSymbols + 1);
+            secretCode.append(randomOnTheFly > 9 ? (char) ('`' + (randomOnTheFly - 9)) : randomOnTheFly);
         }
         while (checkDistinctCharacter(secretCode) < codeLength) {
-            generateRandomCode(codeLength);
+            generateRandomCode(codeLength, numberOfUniqueSymbols);
         }
-        return secretCode;
     }
+
     /**
      * This validates @param secretCode generated to consist only distinct value
+     *
      * @param secretCode
      * @return
      */
