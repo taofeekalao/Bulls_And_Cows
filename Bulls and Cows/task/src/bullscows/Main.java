@@ -14,6 +14,7 @@ public class Main {
 
         int numberOfUniqueSymbols = 0;
         int codeLength = 0;
+        String code = "";
         Scanner scanner = new Scanner(System.in);
         StringBuilder systemGeneratedSecretCode = new StringBuilder();
 
@@ -22,10 +23,18 @@ public class Main {
             Get the length of the secret code
          */
         System.out.println("Input the length of the secret code:");
-        codeLength = scanner.nextInt();
-        while (codeLength < 1) {
+        if (scanner.hasNextInt()) {
             codeLength = scanner.nextInt();
+        } else {
+            String entry = scanner.nextLine();
+            System.out.println("Error: " + entry + " isn't a valid number.");
+            return;
         }
+        if (codeLength < 1) {
+            System.out.println("Error: length of secret code cannot be negative.");
+            return;
+        }
+
         if (codeLength > MAXIMUM_LENGTH) {
             System.out.println("Error: can't generate a secret number with a length of " + codeLength + " because there aren't enough unique digits.");
             return;
@@ -35,14 +44,16 @@ public class Main {
              */
             System.out.println("Input the number of possible symbols in the code:");
             numberOfUniqueSymbols = scanner.nextInt();
-            while (numberOfUniqueSymbols > MAXIMUM_LENGTH) {
-                numberOfUniqueSymbols = scanner.nextInt();
+            if (numberOfUniqueSymbols > MAXIMUM_LENGTH) {
+                System.out.println("Error: maximum number of possible symbols in the code is 36 (0-9, a-z).");
+                return;
             }
 
             /*
                 Check that secret code length required is not longer than available distinct character
              */
             if (numberOfUniqueSymbols < codeLength) {
+                System.out.println("Error: it's not possible to generate a code with a length of " + codeLength + " with " + numberOfUniqueSymbols + " unique symbols.");
                 return;
             }
 
@@ -85,7 +96,7 @@ public class Main {
             inputCode = scanner.next();
 
             /*
-                Check that length of code entered in not more than maximum code length.
+                Check that length of code entered is not more than maximum code length.
             */
             while (inputCode.length() > MAXIMUM_LENGTH) {
                 inputCode = scanner.next();
